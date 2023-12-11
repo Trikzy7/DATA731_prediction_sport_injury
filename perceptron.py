@@ -19,7 +19,6 @@ X_train, y_train, X_test, y_test = load_data_csv()
 #         print(value)
 
 
-
 """ --- Initialisation --- """
 def initialisation(X):
     W = np.random.randn(X.shape[1], 1)
@@ -30,7 +29,6 @@ def initialisation(X):
 """ --- Model --- """
 def model(X, W, b):
     Z = X.dot(W) + b
-    # print(Z.min())
     A = 1 / (1 + np.exp(-Z))
     return A
 
@@ -58,7 +56,6 @@ def update(dW, db, W, b, learning_rate):
 """ --- Predict --- """
 def predict(X, W, b):
     A = model(X, W, b)
-    # print(A)
     return A >= 0.5
 
 
@@ -67,27 +64,28 @@ def artificial_neuron(X_train, y_train, X_test, y_test, learning_rate=0.01, n_it
     # initialisation W, b
     W, b = initialisation(X_train)
 
+    # Stocker les valeurs du coût et de la présicion pour le dataset de train
     train_loss = []
     train_acc = []
+
+    # Stocker les valeurs du coût et de la présicion pour le dataset de test
     test_loss = []
     test_acc = []
 
     for i in tqdm(range(n_iter)):
+        # Fonction d'activation
         A = model(X_train, W, b)
 
         if i % 10 == 0:
-            # Train
+            # -- Train
+            # Ajout de l'évolution du loss dans notre list
             train_loss.append(log_loss(A, y_train))
+            # Calculer les prédictions de notre matrice X_train avec les paramètres W et b à l'instant T
             y_pred = predict(X_train, W, b)
+            # Ajout de l'évolution de la précision des prédictions du modèle par rapport au vraies valeurs d'output
             train_acc.append(accuracy_score(y_train, y_pred))
 
-            print("-------------------------- ")
-            print(y_train)
-            print(y_pred)
-
-            print("-------------------------- ")
-
-            # Test
+            # -- Test
             A_test = model(X_test, W, b)
             test_loss.append(log_loss(A_test, y_test))
             y_pred = predict(X_test, W, b)
@@ -97,19 +95,22 @@ def artificial_neuron(X_train, y_train, X_test, y_test, learning_rate=0.01, n_it
         dW, db = gradients(A, X_train, y_train)
         W, b = update(dW, db, W, b, learning_rate)
 
-    # print(len(train_loss))
+    # -- Affichage des différents graphes
     plt.figure(figsize=(12, 4))
+    # Graphe loss
     plt.subplot(1, 2, 1)
     plt.plot(train_loss, label='train loss')
     plt.plot(test_loss, label='test loss')
     plt.legend()
+    # Graphe accuracy
     plt.subplot(1, 2, 2)
     plt.plot(train_acc, label='train acc')
     plt.plot(test_acc, label='test acc')
     plt.legend()
+
     plt.show()
 
-    return (W, b)
+    return W, b
 
 
 
@@ -130,20 +131,20 @@ b_good_model = np.array([-0.35174418])
 
 # -- Test with personalised data
 # Suposed not injury -> suposed return False
-# nb_session = 3
-# nb_rest_day = 3
-# total_kms = 15
-# max_km_one_day = 7
-# nb_hard_session = 0
-# nb_strengh_training = 2
+nb_session = 3
+nb_rest_day = 3
+total_kms = 15
+max_km_one_day = 7
+nb_hard_session = 0
+nb_strengh_training = 2
 
 # Suposed injury  -> suposed return True
-nb_session = 1.0
-nb_rest_day = 0.0
-total_kms = 50.0
-max_km_one_day = 50.0
-nb_hard_session = 1.0
-nb_strengh_training = 0.0
+# nb_session = 1.0
+# nb_rest_day = 0.0
+# total_kms = 50.0
+# max_km_one_day = 50.0
+# nb_hard_session = 1.0
+# nb_strengh_training = 0.0
 
 my_data = np.array([
     nb_session,
